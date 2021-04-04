@@ -1,0 +1,15 @@
+{
+  "name": "@moreillon/express_group_based_authorization_middleware",
+  "version": "1.0.0",
+  "description": "A group based authorization middleware for express",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Maxime MOREILLON",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^8.2.0"
+  }
+}
