@@ -21,7 +21,10 @@ const GROUP_TO_CHECK = 129
 const app = express()
 app.use(bodyParser.json())
 app.use(cors())
-app.use(group_auth({ group: GROUP_TO_CHECK }))
+app.use(group_auth({
+  group: GROUP_TO_CHECK,
+  url: 'https://api.groups.maximemoreillon.com/members/self/groups'
+}))
 
 app.get('/', (req, res) => {
   res.send(`User is member of group ${GROUP_TO_CHECK}`)
