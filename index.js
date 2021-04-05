@@ -1,4 +1,5 @@
 const axios = require('axios')
+const Cookies = require('cookies')
 const dotenv = require('dotenv')
 
 dotenv.config()
@@ -24,11 +25,26 @@ const retrieve_jwt = (req, res) => {
   }
 
   // Could think of throwing an error if no JWT
-
   return jwt
 }
 
-module.exports = (options) => {
+const user_is_member_neo4j = (groups_of_user, group_id) => {
+  return groups_of_user.find(record => {
+    const user_group = record._fields[record._fieldLookup.group]
+    const user_group_id = user_group.identity.low || user_group.identity
+    return String(user_group_id) === String(group_id)
+  })
+}
+
+const user_is_member_mongodb = (groups_of_user, group_id) => {
+  return groups_of_user.find(user_group => {
+    return String(user_group._id) === String(group_id)
+  })
+}
+
+module.exports = (opt) => {
+  const options = opt || {}
+  
   return (req, res, next) => {
 
     const jwt = retrieve_jwt(req, res)
@@ -40,38 +56,25 @@ module.exports = (options) => {
       return
     }
 
-    const user_id = res.locals.user?.identity.low
-      || res.locals.user?.identity
-      || res.locals.user?._id
+    const group_id = options.group_id || options.group
 
-    if(!user_id) {
-      console.log('[Auth middleware] JWT not found in either cookies or authorization header')
-      res.status(403).send('JWT not found in either cookies or authorization header')
-      return
-    }
-
-    const {group_id} = options
-
+    // Improve how this is passed
     const group_manager_url = options.group_manager_url || process.env.GROUP_MANAGER_API_URL || 'http://group-manager'
-
-    const url = `${group_manager_url}/users/${user_id}/groups`
+    const url = `${group_manager_url}/users/self/groups`
 
     const headers = { Authorization: `Bearer ${jwt}` }
 
     axios.get(url, {headers})
-    .then((response) => {
+    .then(({data}) => {
 
-      const groups_of_user = response.data
+      let user_is_member
 
-      const user_is_member = records.find(record => {
-        const user_group = record._fields[record._fieldLookup.group]
-        const user_group_id = user_group.identity.low || user_group.identity
-        return user_group_id === group_id
-      })
+      if(options.db === 'mongodb') user_is_member = user_is_member_mongodb(data, group_id)
+      else user_is_member = user_is_member_neo4j(data, group_id)
 
       if(user_is_member) next()
       else {
-        const message = `User ${user_id} is not a member of group ${group_id}`
+        const message = `User is not a member of group ${group_id}`
         console.log(`[Auth middleware] ${message}`)
         res.status(403).send(message)
         return
@@ -84,7 +87,5 @@ module.exports = (options) => {
       res.status(403).send(error)
     })
 
-
-    next()
   }
 }
