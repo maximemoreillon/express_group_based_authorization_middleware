@@ -44,27 +44,39 @@ const user_is_member_mongodb = (groups_of_user, group_id) => {
 
 module.exports = (opt) => {
   const options = opt || {}
-  
+
   return (req, res, next) => {
+
+    if(!options.url) {
+      const message = 'Group check URL not specified'
+      console.log(`[Auth middleware] ${message}`)
+      res.status(403).send(message)
+      return
+    }
 
     const jwt = retrieve_jwt(req, res)
 
     // if no JWT available, reject request
     if(!jwt) {
-      console.log('[Auth middleware] JWT not found in either cookies or authorization header')
-      res.status(403).send('JWT not found in either cookies or authorization header')
+      const message = 'JWT not found in either cookies or authorization header'
+      console.log(`[Auth middleware] ${message}`)
+      res.status(403).send(message)
       return
     }
 
     const group_id = options.group_id || options.group
 
-    // Improve how this is passed
-    const group_manager_url = options.group_manager_url || process.env.GROUP_MANAGER_API_URL || 'http://group-manager'
-    const url = `${group_manager_url}/users/self/groups`
+    if(!group_id) {
+      const message = 'Group ID not specified'
+      console.log(`[Auth middleware] ${message}`)
+      res.status(403).send(message)
+      return
+    }
+
 
     const headers = { Authorization: `Bearer ${jwt}` }
 
-    axios.get(url, {headers})
+    axios.get( options.url , {headers})
     .then(({data}) => {
 
       let user_is_member

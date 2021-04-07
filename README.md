@@ -11,7 +11,7 @@ const app = require('express')()
 const group_auth = require('@moreillon/express_group_based_authorization_middleware')
 
 const options = {
-  url: 'GROUP_MANAGER_API_URL',
+  url: 'https://api.groups.example.com/members/self/groups',
   group: 'GROUP_ID'
 }
 
