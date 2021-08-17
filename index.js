@@ -32,11 +32,9 @@ const retrieve_jwt = (req, res) => {
   return jwt
 }
 
-const user_is_member = (groups_of_user, group_id) => {
-  return groups_of_user.find(user_group => {
-    const user_group_id = user_group.identity || user_group._id
-    return String(user_group_id) === String(group_id)
-  })
+const get_matching_groups = (groups_of_user, group_ids) => {
+  const ids_of_groups_of_user = groups_of_user.map(g => g.identity || g._id)
+  return ids_of_groups_of_user.filter(id => group_ids.includes(id))
 }
 
 
@@ -62,10 +60,13 @@ module.exports = (opt) => {
       return
     }
 
+    const group_ids = options.groups || options.group_ids || []
     const group_id = options.group_id || options.group
 
-    if(!group_id) {
-      const message = 'Group ID not specified'
+    if(group_id) group_ids.push(group_id)
+
+    if(!group_ids.length) {
+      const message = 'No group ID specified'
       console.log(`[Auth middleware] ${message}`)
       res.status(403).send(message)
       return
@@ -77,10 +78,14 @@ module.exports = (opt) => {
     axios.get( options.url , {headers})
     .then(({data: groups_of_user}) => {
 
+      const matching_groups = get_matching_groups(groups_of_user, group_ids)
 
-      if(user_is_member(groups_of_user, group_id)) next()
+      if(matching_groups.length) {
+        res.locals.groups = matching_groups
+        next()
+      }
       else {
-        const message = `User is not a member of group ${group_id}`
+        const message = `User is not a member of any of those groups: ${group_ids}`
         console.log(`[Auth middleware] ${message}`)
         res.status(403).send(message)
         return

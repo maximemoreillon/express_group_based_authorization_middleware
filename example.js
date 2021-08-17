@@ -15,20 +15,19 @@ const mongoose_options = {
 
 const EXPRESS_PORT = process.env.EXPRESS_PORT || 80
 
-const GROUP_TO_CHECK = 129
-
+const options = {
+  url: 'https://api.groups.maximemoreillon.com/v2/members/self/groups',
+  group: 129,
+  //groups: [128, 22],
+}
 
 const app = express()
 app.use(bodyParser.json())
 app.use(cors())
-app.use(group_auth({
-  group: GROUP_TO_CHECK,
-  groups: [GROUP_TO_CHECK],
-  url: 'https://api.groups.maximemoreillon.com/v2/members/self/groups'
-}))
+app.use(group_auth(options))
 
 app.get('/', (req, res) => {
-  res.send(`User is member of group ${GROUP_TO_CHECK}`)
+  res.send(`User is member of one of the following group(s) ${options.group || options.groups}`)
 })
 
 
