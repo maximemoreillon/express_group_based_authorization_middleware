@@ -23,7 +23,8 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(group_auth({
   group: GROUP_TO_CHECK,
-  url: 'https://api.groups.maximemoreillon.com/members/self/groups'
+  groups: [GROUP_TO_CHECK],
+  url: 'https://api.groups.maximemoreillon.com/v2/members/self/groups'
 }))
 
 app.get('/', (req, res) => {

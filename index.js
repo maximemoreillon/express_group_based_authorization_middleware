@@ -24,23 +24,21 @@ const retrieve_jwt = (req, res) => {
     jwt = cookies.get('jwt')
   }
 
+  if(!jwt) {
+    jwt = req.query.jwt || req.query.token
+  }
+
   // Could think of throwing an error if no JWT
   return jwt
 }
 
-const user_is_member_neo4j = (groups_of_user, group_id) => {
-  return groups_of_user.find(record => {
-    const user_group = record._fields[record._fieldLookup.group]
-    const user_group_id = user_group.identity.low || user_group.identity
+const user_is_member = (groups_of_user, group_id) => {
+  return groups_of_user.find(user_group => {
+    const user_group_id = user_group.identity || user_group._id
     return String(user_group_id) === String(group_id)
   })
 }
 
-const user_is_member_mongodb = (groups_of_user, group_id) => {
-  return groups_of_user.find(user_group => {
-    return String(user_group._id) === String(group_id)
-  })
-}
 
 module.exports = (opt) => {
   const options = opt || {}
@@ -77,14 +75,10 @@ module.exports = (opt) => {
     const headers = { Authorization: `Bearer ${jwt}` }
 
     axios.get( options.url , {headers})
-    .then(({data}) => {
+    .then(({data: groups_of_user}) => {
 
-      let user_is_member
 
-      if(options.db === 'mongodb') user_is_member = user_is_member_mongodb(data, group_id)
-      else user_is_member = user_is_member_neo4j(data, group_id)
-
-      if(user_is_member) next()
+      if(user_is_member(groups_of_user, group_id)) next()
       else {
         const message = `User is not a member of group ${group_id}`
         console.log(`[Auth middleware] ${message}`)
