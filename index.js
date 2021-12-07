@@ -54,7 +54,7 @@ module.exports = (opt) => {
 
     // if no JWT available, reject request
     if(!jwt) {
-      const message = 'JWT not found in either cookies or authorization header'
+      const message = 'Group based auth: JWT not found in either cookies or authorization header'
       console.log(`[Auth middleware] ${message}`)
       res.status(403).send(message)
       return
