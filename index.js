@@ -21,7 +21,7 @@ const retrieve_jwt = (req, res) => {
   // Try to get JWT from cookies
   if(!jwt) {
     const cookies = new Cookies(req, res)
-    jwt = cookies.get('jwt')
+    jwt = cookies.get('jwt') || cookies.get('token')
   }
 
   if(!jwt) {
