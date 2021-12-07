@@ -33,7 +33,7 @@ const retrieve_jwt = (req, res) => {
 }
 
 const get_matching_groups = (groups_of_user, group_ids) => {
-  const ids_of_groups_of_user = groups_of_user.map(g => g.identity || g._id)
+  const ids_of_groups_of_user = groups_of_user.map(g => (g.identity || g._id).toString() )
   return ids_of_groups_of_user.filter(id => group_ids.includes(id))
 }
 
@@ -85,7 +85,7 @@ module.exports = (opt) => {
         next()
       }
       else {
-        const message = `User is not a member of any of those groups: ${group_ids}`
+        const message = `Group based auth: User is not a member of any of those groups: ${group_ids}`
         console.log(`[Auth middleware] ${message}`)
         res.status(403).send(message)
         return
