@@ -33,7 +33,7 @@ const retrieve_jwt = (req, res) => {
 }
 
 const get_matching_groups = (groups_of_user, group_ids) => {
-  const ids_of_groups_of_user = groups_of_user.map(g => (g.identity || g._id).toString() )
+  const ids_of_groups_of_user = groups_of_user.map(g => (g.properties?._id || g.identity || g._id).toString() )
   return ids_of_groups_of_user.filter(id => group_ids.includes(id))
 }
 
@@ -76,7 +76,10 @@ module.exports = (opt) => {
     const headers = { Authorization: `Bearer ${jwt}` }
 
     axios.get( options.url , {headers})
-    .then(({data: groups_of_user}) => {
+    .then(({data}) => {
+
+      // API v3 has groups under 'items'
+      let groups_of_user = data.items || data
 
       const matching_groups = get_matching_groups(groups_of_user, group_ids)
 

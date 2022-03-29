@@ -1,6 +1,5 @@
 # Express Group-based authorization middleware
 
-
 ## Usage
 
 ```
@@ -11,7 +10,7 @@ const app = require('express')()
 const group_auth = require('@moreillon/express_group_based_authorization_middleware')
 
 const options = {
-  url: 'https://api.groups.example.com/members/self/groups',
+  url: 'https://api.groups.example.com/v2/members/self/groups',
   group: 'GROUP_ID'
 }
 
