@@ -1,21 +1,26 @@
 {
   "name": "@moreillon/express_group_based_authorization_middleware",
-  "version": "2.1.7",
+  "version": "2.2.0",
   "description": "A group based authorization middleware for express",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc"
   },
   "author": "Maxime MOREILLON",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
-    "cookies": "^0.8.0"
+    "cookies": "^0.8.0",
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "@moreillon/authentication_middleware": "^1.0.9",
+    "@types/cookies": "^0.7.7",
+    "@types/cors": "^2.8.13",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1"
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.3"
   }
 }
