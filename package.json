@@ -2,12 +2,13 @@
   "name": "@moreillon/express_group_based_authorization_middleware",
   "version": "2.2.1",
   "description": "A group based authorization middleware for express",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc"
   },
   "author": "Maxime MOREILLON",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.21.1",
     "cookies": "^0.8.0",

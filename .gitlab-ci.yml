@@ -4,7 +4,7 @@ stages:
 publish:
   stage: publish
   only:
-    - master
+    - tags
   tags:
     - moreillon
   before_script:
