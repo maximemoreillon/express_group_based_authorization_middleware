@@ -1,6 +1,6 @@
 {
   "name": "@moreillon/express_group_based_authorization_middleware",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "A group based authorization middleware for express",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
